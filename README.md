@@ -19,6 +19,20 @@ numbers (prices, current stock, current jobs). Structural knowledge is stable
 enough to embed directly; live numbers must always come from EVEFORGE, ESI, or
 in-game, never from memory or from this repo.
 
+## Primary external reference
+
+For anything outside this repo's own structural knowledge — third-party tools,
+community resources, official developer documentation — the canonical starting
+point is CCP's own community-tools page:
+
+**[developers.eveonline.com/docs/community](https://developers.eveonline.com/docs/community/)**
+
+It supersedes the now-archived `devfleet/awesome-eve` list that
+`knowledge/third-party-tools.md` was originally compiled from. Treat it as the
+first place to check when indexing new tools into this repo later, verifying
+whether a tool in `third-party-tools.md` is still alive, or resolving anything
+externally related that this repo doesn't cover yet.
+
 ## Layout
 
 ```
@@ -65,6 +79,4 @@ See `usage/how-to-query.md` for exact steps per tool.
 - `third-party-tools.md` is a starter scaffold compiled from the (now archived)
   `devfleet/awesome-eve` list, everookies.com, and a few tools named directly by
   the operator — not exhaustive, some linked tools may be dead, and one entry
-  (evebook.com) is flagged unverified. Check
-  [developers.eveonline.com/docs/community](https://developers.eveonline.com/docs/community/)
-  for the current CCP-maintained list.
+  (evebook.com) is flagged unverified. See "Primary external reference" above.

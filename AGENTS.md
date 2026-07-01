@@ -34,3 +34,9 @@ market ERP.
    `knowledge/esi-api-index.md` (live/player data) and `knowledge/sde-reference.md`
    (static game data) — between them they cover everything EVEFORGE itself can
    possibly know.
+6. **For anything externally related that this repo doesn't cover** — a
+   third-party tool not yet in `knowledge/third-party-tools.md`, verifying a
+   listed tool is still alive, or any other EVE community/developer resource —
+   the canonical reference is CCP's own community-tools page:
+   [developers.eveonline.com/docs/community](https://developers.eveonline.com/docs/community/).
+   Treat it as the primary source, ahead of memory or a guess.
