@@ -5,7 +5,7 @@
 Paste the raw URL of `CONTEXT.md` directly into the chat, e.g.:
 
 ```
-https://raw.githubusercontent.com/<your-username>/eveforge-kb/main/CONTEXT.md
+https://raw.githubusercontent.com/<your-username>/eve-cortexkb/main/CONTEXT.md
 ```
 
 Most chatbots with URL-fetch/browsing can pull it directly; otherwise open that URL
@@ -15,14 +15,16 @@ self-contained — site map, ESI index, SDE reference, and methodologies all in 
 ## Claude CLI / Gemini CLI
 
 ```
-git clone https://github.com/<your-username>/eveforge-kb
-cd eveforge-kb
+git clone https://github.com/<your-username>/eve-cortexkb
+cd eve-cortexkb
 claude    # or: gemini
 ```
 
-It auto-reads `CLAUDE.md`/`GEMINI.md` → `AGENTS.md` → the knowledge files. Ask
-directly, e.g. "Where in EVEFORGE would I set up a stockpile target for a T2
-module?" or "What ESI scope do I need to read corp blueprints?"
+It auto-reads `CLAUDE.md`/`GEMINI.md` → `AGENTS.md` → the `knowledge/` and
+`tools/` files. Ask directly, e.g. "Where in EVEFORGE would I set up a stockpile
+target for a T2 module?" or "What ESI scope do I need to read corp blueprints?"
+Once other tools (Eve Guru, POD, ...) get their own `tools/<name>/site-map.md`,
+the same pattern of questions works for them too.
 
 ## Keeping it current
 

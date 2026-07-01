@@ -7,9 +7,9 @@ status: placeholder — to be filled in by the operator
 
 This file is intentionally mostly empty. It's where different ways EVE
 industrialists manage their operations get documented — not mechanics (that's
-`eveforge-site.md` / `esi-api-index.md` / `sde-reference.md`), but **workflow and
-goal patterns**: how someone actually runs their empire day to day, and why they
-chose that pattern over another.
+`tools/<tool-name>/site-map.md` / `esi-api-index.md` / `sde-reference.md`), but
+**workflow and goal patterns**: how someone actually runs their empire day to day,
+and why they chose that pattern over another.
 
 ## Why this matters
 
@@ -31,11 +31,11 @@ triggered by *deficit against target*, not by a manually planned run list. Deman
 is met from standing stock; jobs are queued to refill whatever fell below target.
 
 This is not a hypothetical pattern for EVEFORGE users — it's a **built-in feature**:
-see `eveforge-site.md` → Inventory → **Stockpiles** ("named inventory target
-containers for tracking stock health") and → Smart Queue ("optimal slot allocation
-by ISK/hr... runs based on stock deficit"). An operator running this methodology
-should be pointed straight at those two screens rather than a manual BOM/queue
-workflow.
+see `tools/eveforge/site-map.md` → Inventory → **Stockpiles** ("named inventory
+target containers for tracking stock health") and → Smart Queue ("optimal slot
+allocation by ISK/hr... runs based on stock deficit"). An operator running this
+methodology should be pointed straight at those two screens rather than a manual
+BOM/queue workflow.
 
 *(Placeholder — the operator will expand this with their actual target-setting
 logic, review cadence, and how it interacts with the 60-character roster.)*

@@ -1,23 +1,32 @@
-# eveforge-kb
+# eve-cortexkb
 
-A knowledge base that lets an AI chatbot actually understand
-**[eveforge.org](https://eveforge.org)** (EVEFORGE) — a free EVE Online industry &
-market ERP — plus the two data sources underneath it: the **EVE ESI API** and the
-**EVE Online SDE** (Static Data Export).
+An **AI context repo** for EVE Online — a durable, structured knowledge base meant
+to distill years of the operator's accumulated EVE knowledge into a form any AI
+assistant can load and reason from correctly, instead of guessing or hallucinating.
+It is not scoped to any single tool. Today it covers the two data sources
+underneath every EVE Online industry/market tool — the **EVE ESI API** and the
+**EVE Online SDE** (Static Data Export) — the operator's own methodologies, and
+per-tool deep-dives under `tools/` (**[eveforge.org](https://eveforge.org)**
+/ EVEFORGE currently, more to follow as the operator adopts or documents them).
+Expect this repo's scope to keep growing: more tools, more methodologies, more
+general EVE knowledge, not just what's listed here today.
 
-The problem this solves: EVEFORGE's layout and terminology aren't always obvious,
-especially running a large multi-character operation. This repo documents what the
-site actually contains (real navigation, real page purposes, real terminology — not
-guessed), what data ESI exposes, and what static game data the SDE contains, so any
-AI assistant can reason about your setup correctly instead of guessing.
+The problem this solves: a tool's layout and terminology aren't always obvious,
+game mechanics have sharp edges that are easy to misremember, and knowledge that
+lives only in one operator's head is lost the moment they stop to explain it from
+scratch. This repo documents what a given site actually contains (real
+navigation, real page purposes, real terminology — not guessed), what data ESI
+exposes, what static game data the SDE contains, and how the operator actually
+runs their operation, so any AI assistant can reason about it correctly instead
+of guessing.
 
 ## The one rule
 
 Everything here is **structural/reference knowledge** — what pages exist, what an
 API endpoint returns, what columns a data table has. It's deliberately **not** live
 numbers (prices, current stock, current jobs). Structural knowledge is stable
-enough to embed directly; live numbers must always come from EVEFORGE, ESI, or
-in-game, never from memory or from this repo.
+enough to embed directly; live numbers must always come from the relevant tool,
+ESI, or in-game, never from memory or from this repo.
 
 ## Primary external reference
 
@@ -38,36 +47,39 @@ externally related that this repo doesn't cover yet.
 ```
 CONTEXT.md                    single self-contained file — everything below, one paste/fetch
 knowledge/
-  eveforge-site.md            EVEFORGE site map & terminology
   esi-api-index.md            ESI API endpoint index (what data is available)
   sde-reference.md            EVE SDE table reference (Fuzzwork export)
   methodologies.md            operator workflow/goal patterns (placeholder, WIP)
-  third-party-tools.md        non-EVEFORGE EVE tools/websites reference (starter scaffold)
+  third-party-tools.md        EVE tools/websites not (yet) given their own tools/ guide (starter scaffold)
   market-data-lookups.md      public, no-auth current-price lookups (Fuzzwork/EVE Tycoon/Goonmetrics)
+tools/
+  eveforge/site-map.md        EVEFORGE site map & terminology — fully documented, tool in active use
+  eve-guru/site-map.md        placeholder — not yet documented
+  pod/site-map.md             placeholder — not yet documented
 AGENTS.md                     universal agent primer (read first)
 CLAUDE.md / GEMINI.md         thin pointers so each CLI auto-loads context
 usage/how-to-query.md         exact steps for pointing each tool at this repo
 ```
 
-`CONTEXT.md` and the `knowledge/` files carry the same content — `CONTEXT.md` is
-the single-file, easy-to-paste-a-URL version; `knowledge/*.md` is the same material
-split by topic for smaller-context tools or targeted editing. Keep them in sync
-when either changes. **Exception:** `knowledge/third-party-tools.md` is not yet
-mirrored into `CONTEXT.md` — it's a growing scaffold, sync it in once the list
-stabilizes.
+`CONTEXT.md` and the `knowledge/`/`tools/` files carry the same content —
+`CONTEXT.md` is the single-file, easy-to-paste-a-URL version; the split files are
+the same material by topic for smaller-context tools or targeted editing. Keep
+them in sync when either changes. **Exception:** `knowledge/third-party-tools.md`
+is not yet mirrored into `CONTEXT.md` — it's a growing scaffold, sync it in once
+the list stabilizes.
 
 ## Quick use
 
 - **Any web chatbot:** paste the raw GitHub URL for `CONTEXT.md`, or paste its
   contents directly.
 - **Claude CLI / Gemini CLI:** `cd` into a local clone and start the CLI — it
-  auto-reads `CLAUDE.md`/`GEMINI.md` → `AGENTS.md` → the knowledge files.
+  auto-reads `CLAUDE.md`/`GEMINI.md` → `AGENTS.md` → the knowledge/tools files.
 
 See `usage/how-to-query.md` for exact steps per tool.
 
 ## Caveats
 
-- The EVEFORGE site map (`knowledge/eveforge-site.md`) was built by rendering the
+- The EVEFORGE site map (`tools/eveforge/site-map.md`) was built by rendering the
   live site with no character linked — every screen is documented in its empty/
   onboarding state. Table columns and navigation are accurate; populated-data
   behavior (once you link characters) hasn't been verified yet.
@@ -81,6 +93,9 @@ See `usage/how-to-query.md` for exact steps per tool.
   `devfleet/awesome-eve` list, everookies.com, and a few tools named directly by
   the operator — not exhaustive, some linked tools may be dead, and one entry
   (evebook.com) is flagged unverified. See "Primary external reference" above.
+- `tools/eve-guru/` and `tools/pod/` are placeholders — no observation of those
+  sites has been done yet. Fill them in following the pattern in
+  `tools/eveforge/site-map.md` once the operator starts using them.
 - `market-data-lookups.md` (mirrored as Part 5 of `CONTEXT.md`) documents three
   public, no-auth APIs (Fuzzwork, EVE Tycoon, Goonmetrics) for quick current-price
   checks on a few items — every example call in it was actually run and verified
