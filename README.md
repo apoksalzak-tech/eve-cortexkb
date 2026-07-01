@@ -28,6 +28,7 @@ knowledge/
   esi-api-index.md            ESI API endpoint index (what data is available)
   sde-reference.md            EVE SDE table reference (Fuzzwork export)
   methodologies.md            operator workflow/goal patterns (placeholder, WIP)
+  third-party-tools.md        non-EVEFORGE EVE tools/websites reference (starter scaffold)
 AGENTS.md                     universal agent primer (read first)
 CLAUDE.md / GEMINI.md         thin pointers so each CLI auto-loads context
 usage/how-to-query.md         exact steps for pointing each tool at this repo
@@ -36,7 +37,9 @@ usage/how-to-query.md         exact steps for pointing each tool at this repo
 `CONTEXT.md` and the `knowledge/` files carry the same content — `CONTEXT.md` is
 the single-file, easy-to-paste-a-URL version; `knowledge/*.md` is the same material
 split by topic for smaller-context tools or targeted editing. Keep them in sync
-when either changes.
+when either changes. **Exception:** `knowledge/third-party-tools.md` is not yet
+mirrored into `CONTEXT.md` — it's a growing scaffold, sync it in once the list
+stabilizes.
 
 ## Quick use
 
@@ -59,3 +62,9 @@ See `usage/how-to-query.md` for exact steps per tool.
 - `methodologies.md` is a placeholder — only "stockpile production" is sketched in
   as a seed example, cross-referenced to EVEFORGE's actual Stockpiles/Smart Queue
   features. More methodologies to be added by the operator.
+- `third-party-tools.md` is a starter scaffold compiled from the (now archived)
+  `devfleet/awesome-eve` list, everookies.com, and a few tools named directly by
+  the operator — not exhaustive, some linked tools may be dead, and one entry
+  (evebook.com) is flagged unverified. Check
+  [developers.eveonline.com/docs/community](https://developers.eveonline.com/docs/community/)
+  for the current CCP-maintained list.

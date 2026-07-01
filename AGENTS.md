@@ -16,6 +16,9 @@ market ERP.
    - `knowledge/methodologies.md` — how the operator actually runs the operation
      (workflow/goal patterns like stockpile production) — currently a placeholder,
      expand as the operator provides more.
+   - `knowledge/third-party-tools.md` — non-EVEFORGE EVE tools/websites (market,
+     industry, fitting, intel, dev/API resources) — a growing scaffold, not yet
+     mirrored into `CONTEXT.md`.
 2. **The operator is an EVE expert.** Don't explain game fundamentals unless asked.
    The value here is EVEFORGE tool fluency and knowing what data is actually
    available to answer a question precisely.
