@@ -26,6 +26,25 @@ to get it** — not live data itself.
   Characters.
 - 180 endpoints total across 29 tags, as of spec 1.36.
 
+## What this file does NOT define: how authentication actually happens
+
+This index tells you which scope a call needs — it does not, and cannot, tell you
+how your specific environment obtains or attaches the OAuth2 bearer token. That's
+environment-specific; don't assume a mechanism:
+
+- **Never attempt to run the OAuth2 flow yourself** — don't construct SSO login
+  URLs, don't ask the operator to paste a client secret or access token into
+  chat.
+- **If your environment provides a tool/function/MCP server for ESI calls**,
+  assume it handles token lookup and injection for you based on the
+  `character_id` you specify — you supply the character_id and the endpoint; the
+  tool supplies the Bearer token behind the scenes.
+- **If you have no such tool** — e.g. you're a plain chatbot with this file
+  pasted in and no live API access — you cannot make ESI calls at all, public or
+  scoped. Say so explicitly rather than fabricating a plausible-looking response.
+  In that case you're reasoning from this file's structural knowledge only, and
+  any actual data question should be redirected to EVEFORGE or in-game.
+
 ## How to read an entry
 
 `` `GET /characters/{character_id}/assets/` — Get character assets [scope: esi-assets.read_assets.v1] ``
@@ -315,6 +334,22 @@ data via `/markets/{region_id}/orders/`, etc.).
 
 ## Notes for a 60-character operation
 
+### The error budget — read this before looping over 60 characters
+
+ESI enforces a rolling **error budget**, separate from normal request handling.
+Every response carries `X-Esi-Error-Limit-Remain` (errors left in the current
+window) and `X-Esi-Error-Limit-Reset` (seconds until it resets). If the remaining
+count drops low — or you get repeated 4xx/5xx responses (an expired character
+token returning 401 is the classic trigger when looping a large roster) — **stop
+and back off** rather than retrying aggressively. Exhausting the budget gets your
+application rate-limited (HTTP 420) for the rest of the window, and sustained
+abuse risks a longer-term block. Concretely, when iterating many characters:
+check `X-Esi-Error-Limit-Remain` on every call, treat a 401 from one character's
+token as "skip this character and move on," not "retry immediately," and never
+busy-loop through failures. Also respect the `Expires` header on cacheable
+responses — polling faster than the cache validity window burns your error/rate
+budget for no new data, which matters most exactly in a 60-character loop.
+
 - Every scoped endpoint above is **per-character** (or per-corporation with a
   director token) — there's no bulk "give me all 60 characters" call. A tool
   covering a large roster makes one authenticated call per character per endpoint
@@ -325,6 +360,6 @@ data via `/markets/{region_id}/orders/`, etc.).
 - `markets/{region_id}/orders/`, `/history/`, and `/types/` are **public** per
   region — this is the live-price backbone EVEFORGE (and any market tool) polls;
   it's per-region, not per-hub, so a hub like Jita is fetched via its region
-  (The Forge).
+  (The Forge) — see the trade-hub → region ID table in `sde-reference.md`.
 - Corp-level assets/jobs/wallet/blueprints require a **director** role token, not
   just any corp member — matches what EVEFORGE's Corporation Hub says.

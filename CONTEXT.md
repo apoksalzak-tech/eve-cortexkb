@@ -307,6 +307,25 @@ it** — not live data itself.
   token carrying the specific scope named below.
 - 180 endpoints total across 29 tags, as of spec 1.36.
 
+## What this KB does NOT define: how authentication actually happens
+
+This index tells you which scope a call needs — it does not, and cannot, tell you
+how your specific environment obtains or attaches the OAuth2 bearer token. That's
+environment-specific; don't assume a mechanism:
+
+- **Never attempt to run the OAuth2 flow yourself** — don't construct SSO login
+  URLs, don't ask the operator to paste a client secret or access token into
+  chat.
+- **If your environment provides a tool/function/MCP server for ESI calls**,
+  assume it handles token lookup and injection for you based on the
+  `character_id` you specify — you supply the character_id and the endpoint; the
+  tool supplies the Bearer token behind the scenes.
+- **If you have no such tool** — e.g. you're a plain chatbot with this file
+  pasted in and no live API access — you cannot make ESI calls at all, public or
+  scoped. Say so explicitly rather than fabricating a plausible-looking response.
+  In that case you're reasoning from this file's structural knowledge only, and
+  any actual data question should be redirected to EVEFORGE or in-game.
+
 `` `GET /characters/{character_id}/assets/` — Get character assets [scope: esi-assets.read_assets.v1] ``
 means: HTTP GET, path takes a character_id, caller's token must carry that scope.
 `[public]` = no token required.
@@ -590,6 +609,22 @@ data via `/markets/{region_id}/orders/`, etc.).
 
 ## Notes for a 60-character operation
 
+### The error budget — read this before looping over 60 characters
+
+ESI enforces a rolling **error budget**, separate from normal request handling.
+Every response carries `X-Esi-Error-Limit-Remain` (errors left in the current
+window) and `X-Esi-Error-Limit-Reset` (seconds until it resets). If the remaining
+count drops low — or you get repeated 4xx/5xx responses (an expired character
+token returning 401 is the classic trigger when looping a large roster) — **stop
+and back off** rather than retrying aggressively. Exhausting the budget gets your
+application rate-limited (HTTP 420) for the rest of the window, and sustained
+abuse risks a longer-term block. Concretely, when iterating many characters:
+check `X-Esi-Error-Limit-Remain` on every call, treat a 401 from one character's
+token as "skip this character and move on," not "retry immediately," and never
+busy-loop through failures. Also respect the `Expires` header on cacheable
+responses — polling faster than the cache validity window burns your error/rate
+budget for no new data, which matters most exactly in a 60-character loop.
+
 - Every scoped endpoint above is **per-character** (or per-corporation with a
   director token) — there's no bulk "give me all 60 characters" call. A tool
   covering a large roster makes one authenticated call per character per endpoint
@@ -600,7 +635,7 @@ data via `/markets/{region_id}/orders/`, etc.).
 - `markets/{region_id}/orders/`, `/history/`, and `/types/` are **public** per
   region — this is the live-price backbone EVEFORGE (and any market tool) polls;
   it's per-region, not per-hub, so a hub like Jita is fetched via its region
-  (The Forge).
+  (The Forge) — see the trade-hub → region ID table in Part 3.
 - Corp-level assets/jobs/wallet/blueprints require a **director** role token, not
   just any corp member — matches what EVEFORGE's Corporation Hub says.
 
@@ -683,6 +718,50 @@ EVEFORGE's Item Explorer category counts are built from.
 against `ramActivities` directly rather than trusting this list blindly** — it's
 included here as a memory aid, not guaranteed current.
 
+#### Industrial math: from SDE base values to actual build requirements
+
+`industryActivityMaterials.quantity` is the **base, unmodified** material
+requirement per run at zero bonuses — it is never the actual number of units
+you'll consume. Treating it as a final answer is the single most common mistake
+an agent will make with this data. The real requirement runs through a reduction
+pipeline, in this order:
+
+1. **Base quantity** — `industryActivityMaterials.quantity` (SDE), × number of runs.
+2. **Blueprint Material Efficiency (ME)** — the ME level of the *specific
+   blueprint copy being used*. This is character-owned state, not static data —
+   get it from ESI `GET /characters/{character_id}/blueprints/` (field
+   `material_efficiency`), never from the SDE.
+3. **Structure type bonus** — the industry structure (e.g. Raitaru/Azbel/Sotiyo)
+   has its own base ME bonus for certain item categories.
+4. **Rig bonus** — T1/T2 industry rigs fitted to that structure add a further ME
+   bonus, and the size of that bonus depends on the structure's security-space
+   (highsec vs. lowsec/null/WH rigs give different bonus tiers).
+5. Rounding is applied **once, at the end** of the whole chain (per material
+   line, with a floor of 1 unit) — not re-rounded after each individual step.
+
+**Character industry skills do not reduce material quantity** in current EVE
+mechanics — a common misconception worth correcting explicitly, since an agent
+asked to "account for skills" might otherwise fold a skill bonus into the
+material math. Skills like Industry and Advanced Industry reduce **job
+installation cost (ISK)** and **job time**, not material consumption. Job *time*
+has its own, separate reduction chain: base `industryActivity.time` → blueprint
+Time Efficiency (TE, also from the ESI blueprint record) → structure/rig TE
+bonus → character time-reducing skills.
+
+**Job cost (ISK) is a separate calculation from material cost entirely** —
+roughly EIV (Estimated Item Value) × system cost index (ESI
+`GET /industry/systems/`, public) × structure/facility tax settings. See Part 1's
+Settings → Facilities entry for the SCC Industry Tax / Facility Tax split
+EVEFORGE exposes there.
+
+**Bottom line for an agent**: never present a "build cost" derived only from
+`industryActivityMaterials` × current market price. At minimum, pull the actual
+blueprint ME/TE from ESI before doing the arithmetic, and flag structure/rig
+bonuses and system cost index as verify-in-EVEFORGE inputs if you don't have
+them to hand. The *exact* percentages and rounding formula are patch-sensitive —
+verify against current CCP documentation or EVEFORGE's own calculators (BOM
+Calculator, Production Hub) rather than trusting a hardcoded formula.
+
 ### Planetary Industry
 | Table | Columns |
 |---|---|
@@ -703,6 +782,21 @@ included here as a memory aid, not guaranteed current.
 | `staStations` | stationID, security, dockingCostPerVolume, maxShipVolumeDockable, officeRentalCost, operationID, stationTypeID, corporationID, solarSystemID, constellationID, regionID, stationName, coordinates, **reprocessingEfficiency**, reprocessingStationsTake, reprocessingHangarFlag |
 | `staStationTypes` | stationTypeID, dock geometry, operationID, officeSlots, reprocessingEfficiency, conquerable |
 | `staServices` | serviceID, serviceName, description |
+
+#### Major trade hub → region ID (verified against live ESI, 2026-06-30)
+
+| Hub | Region | Region ID |
+|---|---|---|
+| Jita | The Forge | 10000002 |
+| Amarr | Domain | 10000043 |
+| Dodixie | Sinq Laison | 10000032 |
+| Rens | Heimatar | 10000030 |
+| Hek | Metropolis | 10000042 |
+
+Region IDs are effectively permanent (CCP doesn't reassign them). "Check Jita
+prices" means "call `/markets/10000002/orders/` or `/history/`" — resolve the
+hub name to its region ID from this table before hitting any market endpoint;
+don't guess or re-derive it at query time.
 
 ### Module/ship attributes (Dogma)
 | Table | Columns |
@@ -755,6 +849,28 @@ Missions/agents (`agtAgents*`, `mstMissions*`, `epicArcs*`), skins
 tech-tree/insurance/graphics/translation tables. Full current list: fetch
 `https://www.fuzzwork.co.uk/dump/latest/csv/` directly — it's a plain Apache
 directory listing, cheap to re-check.
+
+## Data conflicts: when the SDE isn't the final answer
+
+Two known cases where static SDE data is either the wrong table to use, or gets
+overridden entirely by live/dynamic data:
+
+- **Ship volume for logistics/hauling.** `invTypes.volume` is a ship's
+  **unpackaged/assembled** volume (huge — the in-space, fitted size). For cargo,
+  freight, or hauling math, you almost always want the **packaged** volume
+  instead, which lives in `invVolumes.typeID/volume` as an override table — only
+  present for types that can be repackaged (mainly ships). If a typeID has a row
+  in `invVolumes`, use that value for logistics; otherwise fall back to
+  `invTypes.volume`.
+- **Abyssal / Mutated modules.** These have no fixed stats in the SDE at all —
+  their attributes are rolled per individual item instance by a mutaplasmid.
+  `dgmTypeAttributes` only has the *unmutated* base module's stats. For an
+  actual mutated item, ESI's `GET /dogma/dynamic/items/{type_id}/{item_id}/`
+  (Part 2 → Dogma) returns the item's real, rolled attributes and **completely
+  overrides** anything `dgmTypeAttributes` would say for that specific item
+  instance. If a user mentions "abyssal," "mutated," or a mutaplasmid name,
+  assume static SDE attribute data does not apply — the dynamic-items endpoint
+  (or an ESI-synced tool like EVEFORGE) is required.
 
 ## Practical notes
 
