@@ -379,11 +379,17 @@ doesn't confirm or deny anything about the structure itself.
 
 **Operator's home market**: Goonswarm Federation's staging Keepstar, **"1st Taj
 Mahgoon"**, in system **C-J6MT** (Insmother region), structure_id
-**`1049588174021`**. Sourced from Goonswarm's own internal tool
-(goonmetrics.apps.goonswarm.org) via a market-import URL referencing that ID
-against C-J6MT — not independently verified via an authenticated ESI call (no
-token available at time of writing), so treat as high-confidence but unconfirmed
-until checked with a real token. **Access to this structure's live market/asset
-data is gated by whether the querying character has docking rights and the
-correct scopes — the operator has flagged private-structure access as an open
-problem to solve separately; it is not yet resolved in this repo.**
+**`1049588174021`**. Originally sourced from Goonswarm's own internal tool
+(goonmetrics.apps.goonswarm.org) via a market-import URL referencing that ID —
+**since corroborated**: querying Goonmetrics' public price API
+(`market-data-lookups.md`) with this exact structure_id as `station_id` returns
+live, coherent buy/sell data, which a wrong or made-up ID would not do. Treat the
+ID itself as confirmed. Raw unauthenticated ESI calls to
+`/markets/structures/1049588174021/` and `/universe/structures/1049588174021/`
+still return `401 Unauthorized` though — the structure is **not** publicly
+queryable via ESI directly; Goonmetrics can serve price data for it because it
+holds its own authenticated character token and re-publishes the result. **Full
+access (assets, jobs, anything beyond price_data) is still gated by docking
+rights and scopes on the querying character — the operator has flagged that as
+an open problem to solve separately.** See `market-data-lookups.md` for the
+price-only workaround that's already solved.

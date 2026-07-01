@@ -18,12 +18,13 @@ durable **AI context repo** — a place to distill years of accumulated EVE Onli
 knowledge so any AI assistant can load it and reason correctly instead of
 guessing. It is not scoped to any single tool. Today that covers two foundational
 data sources — the **EVE ESI API** and the **EVE SDE** (Static Data Export) — the
-operator's own methodologies (Part 3), and per-tool deep-dives (Part 4):
-**[eveforge.org](https://eveforge.org) (EVEFORGE)** is the tool currently in use
-and fully documented; it is not treated as the operator's only or permanent tool
-— other tools (Eve Guru, POD, ...) will get their own sections in Part 4 as
-they're adopted, and this file's scope is expected to keep growing well beyond
-what's here today. The problem this repo solves: a given tool's layout and
+operator's own methodologies (Part 3), per-tool deep-dives (Part 4), and
+standalone practical references like public no-auth market data lookups
+(Part 5). **[eveforge.org](https://eveforge.org) (EVEFORGE)** is the tool
+currently in use and fully documented; it is not treated as the operator's only
+or permanent tool — other tools (Eve Guru, POD, ...) will get their own sections
+in Part 4 as they're adopted, and this file's scope is expected to keep growing
+well beyond what's here today. The problem this repo solves: a given tool's layout and
 terminology aren't self-explanatory, game mechanics have sharp edges that are
 easy to misremember, and understanding any of it well requires knowing what data
 is available (ESI), what static game data underlies everything (the SDE), and how
@@ -406,14 +407,19 @@ doesn't confirm or deny anything about the structure itself.
 
 **Operator's home market**: Goonswarm Federation's staging Keepstar, **"1st Taj
 Mahgoon"**, in system **C-J6MT** (Insmother region), structure_id
-**`1049588174021`**. Sourced from Goonswarm's own internal tool
-(goonmetrics.apps.goonswarm.org) via a market-import URL referencing that ID
-against C-J6MT — not independently verified via an authenticated ESI call (no
-token available at time of writing), so treat as high-confidence but unconfirmed
-until checked with a real token. **Access to this structure's live market/asset
-data is gated by whether the querying character has docking rights and the
-correct scopes — the operator has flagged private-structure access as an open
-problem to solve separately; it is not yet resolved in this repo.**
+**`1049588174021`**. Originally sourced from Goonswarm's own internal tool
+(goonmetrics.apps.goonswarm.org) via a market-import URL referencing that ID —
+**since corroborated**: querying Goonmetrics' public price API (Part 5) with
+this exact structure_id as `station_id` returns live, coherent buy/sell data,
+which a wrong or made-up ID would not do. Treat the ID itself as confirmed. Raw
+unauthenticated ESI calls to `/markets/structures/1049588174021/` and
+`/universe/structures/1049588174021/` still return `401 Unauthorized` though —
+the structure is **not** publicly queryable via ESI directly; Goonmetrics can
+serve price data for it because it holds its own authenticated character token
+and re-publishes the result. **Full access (assets, jobs, anything beyond
+price_data) is still gated by docking rights and scopes on the querying
+character — the operator has flagged that as an open problem to solve
+separately.** See Part 5 for the price-only workaround that's already solved.
 
 
 ---
@@ -996,3 +1002,174 @@ elsewhere).
 ## POD
 
 *(placeholder — not yet documented; add a page-by-page map here once observed)*
+---
+
+# Part 5 — Public Market Data Lookups (No Auth Required)
+
+*(status: verified working, 2026-07-01 — all example calls below were actually run)*
+
+Purpose: get the **current price of one or a few specific items** — for an agent
+answering a quick question, or for pulling a number into a Google Sheet — without
+standing up a database and without EVE SSO/OAuth2. This is deliberately scoped
+small: a handful of items, not a market-wide sync (EVEFORGE, or the raw ESI
+`markets/{region_id}/orders/` endpoint in Part 1, are the right tools for that).
+
+Raw ESI (`GET /markets/{region_id}/orders/`) is public and would work, but it
+returns the **entire order book** (potentially thousands of rows, paginated) — you'd
+have to fetch it all and aggregate client-side just to answer "what's the price."
+The three services below do that aggregation for you and hand back a single
+current-price-shaped answer in one call.
+
+## Quick comparison
+
+| Source | Auth | Response format | Scope | Best for |
+|---|---|---|---|---|
+| **Fuzzwork** | none | JSON | region OR station | quick buy/sell aggregate, multiple types per call |
+| **EVE Tycoon** | none | JSON (served as `text/plain`) | region only | richer stats (outliers, 5%-trimmed averages) |
+| **Goonmetrics** | none | XML | station (incl. player structures Goonswarm has access to) | Jita **and** the operator's own C-J6MT home market; native Google Sheets `IMPORTXML` support |
+
+All three were queried live on 2026-07-01 with Tritanium (`typeID 34`) against
+The Forge (`region_id 10000002`) / Jita 4-4 (`station_id 60003760`) to confirm
+they work as documented below — not taken on faith from old docs.
+
+## Fuzzwork market aggregates
+
+```
+GET https://market.fuzzwork.co.uk/aggregates/?region={region_id}&types={type_id}[,{type_id}...]
+GET https://market.fuzzwork.co.uk/aggregates/?station={station_id}&types={type_id}[,{type_id}...]
+```
+
+Region-level or station-level (use one or the other, not both); comma-separate
+multiple `types`. Example (Jita 4-4, Tritanium):
+
+```
+curl "https://market.fuzzwork.co.uk/aggregates/?station=60003760&types=34"
+```
+```json
+{"34":{"buy":{"weightedAverage":"2.22","max":"3.41","min":"0.01","stddev":"0.98","median":"3.005","volume":"12632295075.0","orderCount":"34","percentile":"3.324"},"sell":{"weightedAverage":"3.97","max":"55000.0","min":"3.59","stddev":"6436.15","median":"4.12","volume":"16700843562.0","orderCount":"73","percentile":"3.5995"}}}
+```
+
+Response is keyed by typeID, each with `buy`/`sell` objects. **`percentile` is the
+closest thing to "current price"** — a 5th-percentile-trimmed buy/sell to filter
+out troll orders; `min`/`max` are the raw extremes (don't use `max` on `sell` as
+"the price," it's often a joke listing in the millions). Fuzzworks also has a
+name→typeID helper used elsewhere in this repo:
+`GET https://www.fuzzwork.co.uk/api/typeid.php?typename={name}`.
+
+## EVE Tycoon market stats
+
+```
+GET https://evetycoon.com/api/v1/market/stats/{region_id}/{type_id}
+```
+
+One type per call, region only (a structure-ID path was tried and returned
+`400` — this endpoint doesn't take player-structure IDs). Example (The Forge,
+Tritanium):
+
+```
+curl "https://evetycoon.com/api/v1/market/stats/10000002/34"
+```
+```json
+{"buyVolume":17874287962,"sellVolume":17629423351,"buyOrders":76,"sellOrders":191,"buyOutliers":1,"sellOutliers":11,"buyThreshold":0.387,"sellThreshold":36.0,"buyAvgFivePercent":3.38963431678987,"sellAvgFivePercent":3.5999999999999996,"maxBuy":3.87,"minSell":3.6}
+```
+
+`minSell` / `maxBuy` are the cleanest single-number answer to "what's the current
+price" — already outlier-filtered (see `buyOutliers`/`sellOutliers` counts).
+`buyAvgFivePercent`/`sellAvgFivePercent` mirror Fuzzwork's `percentile`. No
+published OpenAPI/docs page was found (the `/docs` page is a client-rendered SPA
+with no visible endpoint list) — this endpoint shape was confirmed by direct
+testing, not documentation; treat it as slightly less stable than Fuzzwork's
+(which has been a long-standing community-standard API).
+
+## Goonmetrics price data (also covers the operator's C-J6MT home market)
+
+```
+GET https://goonmetrics.apps.goonswarm.org/api/price_data/?station_id={station_or_structure_id}&type_id={type_id}[,{type_id}...]
+GET https://goonmetrics.apps.goonswarm.org/api/price_history/?region_id={region_id}&type_id={type_id}[,{type_id}...]
+```
+
+Up to 50 `type_id`s per call (comma-separated). `price_history` returns the last
+30 days. Self-documented at
+[goonmetrics.apps.goonswarm.org/api/](https://goonmetrics.apps.goonswarm.org/api/).
+Example (Jita 4-4, Tritanium):
+
+```
+curl "https://goonmetrics.apps.goonswarm.org/api/price_data/?station_id=60003760&type_id=34"
+```
+```xml
+<goonmetrics method="price_data" version="1.0">
+  <price_data>
+    <type id="34">
+      <updated>2026-07-01T04:37:57Z</updated>
+      <all><weekly_movement>39570789234.4</weekly_movement></all>
+      <buy><max>3.41</max><listed>13632295075</listed></buy>
+      <sell><min>3.60</min><listed>16478386271</listed></sell>
+    </type>
+  </price_data>
+</goonmetrics>
+```
+
+**This same endpoint also works for the operator's home market** — Goonswarm's
+C-J6MT Keepstar, `structure_id 1049588174021` (Part 1 → Player-owned market
+hubs) — just pass it as `station_id`:
+
+```
+curl "https://goonmetrics.apps.goonswarm.org/api/price_data/?station_id=1049588174021&type_id=34"
+```
+returned live, sensible data (`buy max 3.22`, `sell min 4.23`) at time of testing.
+Confirming that also **upgrades the earlier "unverified" status on structure_id
+1049588174021** in Part 1 — a made-up or wrong ID would not return coherent live
+pricing here.
+
+**Important nuance on the private-structure problem:** raw unauthenticated ESI
+calls to this same structure_id (`/markets/structures/1049588174021/` and
+`/universe/structures/1049588174021/`) still return `401 Unauthorized` when
+tested directly — the structure itself is **not** publicly queryable via ESI.
+Goonmetrics can serve it because it's a Goonswarm-operated tool holding its own
+authenticated character token with access, and it re-publishes the result
+through its own public API. So this doesn't make the structure's raw ESI data
+public — it means **Goonmetrics functions as a read-only public proxy for
+Goonswarm's own home market**, which is enough to solve price-checking for this
+one hub without the operator needing their own docked-character token. It does
+**not** extend to assets, jobs, or anything beyond price_data/price_history for
+that structure.
+
+## Cross-verified caveat: PLEX doesn't behave like a normal item
+
+Querying PLEX (`typeID 44992`) against The Forge returned **all zeros** on both
+Fuzzwork and EVE Tycoon independently:
+```
+curl "https://market.fuzzwork.co.uk/aggregates/?region=10000002&types=44992"
+curl "https://evetycoon.com/api/v1/market/stats/10000002/44992"
+```
+Two independent aggregators agreeing on zero is a real signal, not a fluke: PLEX
+trades through its own separate universal market mechanism, not through normal
+per-region player buy/sell orders like everything else in this file. Don't be
+surprised by a zero/empty result for PLEX from any of these three sources — it's
+expected, not a bug in the query.
+
+## Using these in Google Sheets
+
+- **Goonmetrics (XML)** works with Sheets' native `IMPORTXML` — no Apps Script
+  needed:
+  ```
+  =IMPORTXML("https://goonmetrics.apps.goonswarm.org/api/price_data/?station_id=60003760&type_id=34", "//sell/min")
+  ```
+- **Fuzzwork and EVE Tycoon (JSON)** — Sheets has no native JSON import function.
+  Use Apps Script: a small custom function wrapping
+  `UrlFetchApp.fetch(url).getContentText()` and `JSON.parse(...)`, called from
+  the sheet like a normal formula. `IMPORTDATA` will fetch the raw text but won't
+  parse JSON into cells for you.
+- Whichever source, **cache/throttle in the sheet** (e.g. a manual refresh
+  button or a time-based trigger, not a formula recalculating on every open) —
+  these are shared community services, not the operator's own infrastructure;
+  don't hammer them.
+
+## Etiquette / stability notes
+
+None of these three publish a documented rate limit, unlike ESI's explicit error
+budget (Part 1). Treat that as "no published limit" rather than "no limit" — keep
+call volume proportional to "a few specific items," per the stated goal, not a
+scripted loop over hundreds of types. If a heavier need comes up later, that's a
+"build a real sync against ESI/EVEFORGE" problem, not a "call these three
+harder" problem.

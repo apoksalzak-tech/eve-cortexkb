@@ -25,6 +25,8 @@ expected to keep growing well beyond what's here today — other tools (Eve Guru
    - `knowledge/third-party-tools.md` — EVE tools/websites not (yet) given their own
      deep-dive under `tools/` (market, industry, fitting, intel, dev/API resources)
      — a growing scaffold, not yet mirrored into `CONTEXT.md`.
+   - `knowledge/market-data-lookups.md` — verified, no-auth-required public APIs for
+     a quick current price on one or a few specific items (see item 7 below).
    - `tools/<tool-name>/` — one directory per tool the operator actually uses,
      with a page-by-page map and terminology built from direct observation of the
      live site. Currently:
@@ -55,3 +57,9 @@ expected to keep growing well beyond what's here today — other tools (Eve Guru
    resource — the canonical reference is CCP's own community-tools page:
    [developers.eveonline.com/docs/community](https://developers.eveonline.com/docs/community/).
    Treat it as the primary source, ahead of memory or a guess.
+7. **If you have HTTP fetch access and need a current price for one or a few
+   specific items** (not a full market sync), `knowledge/market-data-lookups.md`
+   has three verified, no-auth-required endpoints (Fuzzwork, EVE Tycoon,
+   Goonmetrics) that return an aggregated current price in one call — including
+   one that covers the operator's own C-J6MT home market. Use one of those
+   rather than stating a price from memory, per rule 3.
