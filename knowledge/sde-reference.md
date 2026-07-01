@@ -158,7 +158,10 @@ directory listing, cheap to re-check.
 
 - **typeID is the universal join key.** Almost every question ("what does this
   blueprint need," "what does this module do," "what system is this station in")
-  resolves to joining through `invTypes.typeID`.
+  resolves to joining through `invTypes.typeID`. If you're starting from an item
+  *name* rather than an ID, resolve it to a typeID first — see "Name → typeID
+  resolution" in `esi-api-index.md` (or `invTypes.typeName` if working offline
+  from the SDE alone). Never guess an ID from the name.
 - **The SDE has no prices.** `invTypes.basePrice` exists but is a vestigial
   NPC-seed value, not a market price — never treat it as current. Live prices only
   come from ESI market endpoints (see `esi-api-index.md`) or a market tool like

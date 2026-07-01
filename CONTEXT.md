@@ -311,6 +311,28 @@ it** — not live data itself.
 means: HTTP GET, path takes a character_id, caller's token must carry that scope.
 `[public]` = no token required.
 
+## Name → typeID resolution (do this before anything else)
+
+Every EVE item, ship, or module has a canonical name (e.g. "Paladin") and a
+canonical integer ID (`typeID`) that all structural data — every ESI response,
+every SDE table — is actually keyed on. **When a user asks about an item by name,
+resolve the name to a typeID FIRST, before attempting any lookup, join, or
+calculation.** Two ways to do it, in order of preference:
+
+1. **ESI**: `POST /universe/ids/` [public] — send a list of names, get back
+   typeIDs (and IDs for other categories: characters, corporations, systems,
+   etc., all in one call). Fastest option if you have live API access.
+2. **SDE**: search `invTypes.csv` (or the `invTypes` table in a full DB import,
+   see Part 3) for a `typeName` match — exact match is safest, EVE item names are
+   unique. Use this when you only have the SDE loaded and no live ESI access.
+
+Do not guess a typeID from memory or pattern-match a name to a "likely" ID —
+type IDs aren't predictable from the name, and a wrong ID silently returns data
+for the wrong item with no error. Lock in the correct typeID before doing
+anything downstream with it (blueprint materials via
+`industryActivityMaterials`, module attributes via `dgmTypeAttributes`, market
+data via `/markets/{region_id}/orders/`, etc.).
+
 ### Alliance
 - `GET /alliances/` — List all alliances [public]
 - `GET /alliances/{alliance_id}/` — Get alliance information [public]
