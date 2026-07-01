@@ -43,6 +43,7 @@ knowledge/
   sde-reference.md            EVE SDE table reference (Fuzzwork export)
   methodologies.md            operator workflow/goal patterns (placeholder, WIP)
   third-party-tools.md        non-EVEFORGE EVE tools/websites reference (starter scaffold)
+  market-data-lookups.md      public, no-auth current-price lookups (Fuzzwork/EVE Tycoon/Goonmetrics)
 AGENTS.md                     universal agent primer (read first)
 CLAUDE.md / GEMINI.md         thin pointers so each CLI auto-loads context
 usage/how-to-query.md         exact steps for pointing each tool at this repo
@@ -80,3 +81,10 @@ See `usage/how-to-query.md` for exact steps per tool.
   `devfleet/awesome-eve` list, everookies.com, and a few tools named directly by
   the operator — not exhaustive, some linked tools may be dead, and one entry
   (evebook.com) is flagged unverified. See "Primary external reference" above.
+- `market-data-lookups.md` (mirrored as Part 5 of `CONTEXT.md`) documents three
+  public, no-auth APIs (Fuzzwork, EVE Tycoon, Goonmetrics) for quick current-price
+  checks on a few items — every example call in it was actually run and verified
+  live on 2026-07-01, not taken from documentation alone. It also resolves, for
+  price-checking only, part of the private-structure-data problem: Goonmetrics
+  publicly serves price data for the operator's own C-J6MT Keepstar even though
+  raw ESI still requires an authenticated, docked character token for it.

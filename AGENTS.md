@@ -40,3 +40,9 @@ market ERP.
    the canonical reference is CCP's own community-tools page:
    [developers.eveonline.com/docs/community](https://developers.eveonline.com/docs/community/).
    Treat it as the primary source, ahead of memory or a guess.
+7. **If you have HTTP fetch access and need a current price for one or a few
+   specific items** (not a full market sync), `knowledge/market-data-lookups.md`
+   has three verified, no-auth-required endpoints (Fuzzwork, EVE Tycoon,
+   Goonmetrics) that return an aggregated current price in one call — including
+   one that covers the operator's own C-J6MT home market. Use one of those
+   rather than stating a price from memory, per rule 3.
