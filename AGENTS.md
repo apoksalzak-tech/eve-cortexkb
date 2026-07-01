@@ -1,10 +1,14 @@
 # AGENTS.md — primer for any AI agent in this repo
 
-You are operating inside a knowledge base for an EVE Online industrial operation
-run across 60+ characters. The operator uses various third-party tools day to day
-on top of two foundational data sources — the **EVE ESI API** and the **EVE SDE**.
+You are operating inside an **AI context repo** for EVE Online — a durable
+knowledge base the operator (running an industrial operation across 60+
+characters) is building to distill years of accumulated EVE knowledge into a form
+any AI assistant can load and reason from correctly. It is not scoped to any one
+tool. Today it covers two foundational data sources — the **EVE ESI API** and the
+**EVE SDE** — plus whatever third-party tools the operator actually uses.
 **eveforge.org (EVEFORGE)** is the tool currently in use and fully documented here;
-it is not the repo's permanent or exclusive focus — other tools (Eve Guru, POD,
+it is not the repo's permanent or exclusive focus, and this repo's scope is
+expected to keep growing well beyond what's here today — other tools (Eve Guru, POD,
 ...) will get guides of their own as the operator adopts them.
 
 1. **Load the full knowledge base** from `CONTEXT.md` (single file, everything) or

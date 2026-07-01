@@ -1,6 +1,6 @@
 ---
 title: eveforge-kb — Combined Context
-purpose: Single-file, self-contained knowledge base for an AI chatbot to understand the EVE ESI API, the EVE SDE, and the tools an EVE Online industrialist uses on top of them (EVEFORGE currently, more planned)
+purpose: Single-file, self-contained AI context repo distilling the operator's EVE Online knowledge over time — the EVE ESI API, the EVE SDE, operator methodologies, and per-tool deep-dives (EVEFORGE currently, more planned) — not scoped to any one tool
 ---
 
 # eveforge-kb — Combined Context
@@ -13,18 +13,21 @@ whichever is more convenient for your context window.
 
 ## Who this is for
 
-The operator plays EVE Online with 60+ characters and runs an industry & market
-operation on top of two foundational data sources — the **EVE ESI API** and the
-**EVE SDE** (Static Data Export) — plus whichever third-party tools they're
-actually using day to day to do the number-crunching (BOM, margins, invention
-odds, PI profitability, etc.). **[eveforge.org](https://eveforge.org) (EVEFORGE)**
-is the one currently in use and fully documented here (Part 4); it is not treated
-as the operator's only or permanent tool — other tools (Eve Guru, POD, ...) will
-get their own sections in Part 4 as they're adopted. The problem this repo solves:
-a given tool's layout and terminology aren't self-explanatory, and understanding
-what it does well requires knowing what data it has access to (ESI) and what
-static game data underlies everything (the SDE). This file gives an assistant all
-of that at once.
+The operator plays EVE Online with 60+ characters and is building this repo as a
+durable **AI context repo** — a place to distill years of accumulated EVE Online
+knowledge so any AI assistant can load it and reason correctly instead of
+guessing. It is not scoped to any single tool. Today that covers two foundational
+data sources — the **EVE ESI API** and the **EVE SDE** (Static Data Export) — the
+operator's own methodologies (Part 3), and per-tool deep-dives (Part 4):
+**[eveforge.org](https://eveforge.org) (EVEFORGE)** is the tool currently in use
+and fully documented; it is not treated as the operator's only or permanent tool
+— other tools (Eve Guru, POD, ...) will get their own sections in Part 4 as
+they're adopted, and this file's scope is expected to keep growing well beyond
+what's here today. The problem this repo solves: a given tool's layout and
+terminology aren't self-explanatory, game mechanics have sharp edges that are
+easy to misremember, and understanding any of it well requires knowing what data
+is available (ESI), what static game data underlies everything (the SDE), and how
+the operator actually works. This file gives an assistant all of that at once.
 
 ## The one rule
 

@@ -1,19 +1,24 @@
 # eveforge-kb
 
-A knowledge base that lets an AI chatbot actually understand the two data sources
-underneath any EVE Online industry/market tool — the **EVE ESI API** and the
-**EVE Online SDE** (Static Data Export) — plus the specific tools an operator uses
-day to day. **[eveforge.org](https://eveforge.org)** (EVEFORGE), a free EVE Online
-industry & market ERP, is the tool currently in active use and the first to get a
-full deep-dive; it isn't treated as the repo's permanent or exclusive focus — more
-tools get their own guides under `tools/` as the operator adopts them.
+An **AI context repo** for EVE Online — a durable, structured knowledge base meant
+to distill years of the operator's accumulated EVE knowledge into a form any AI
+assistant can load and reason from correctly, instead of guessing or hallucinating.
+It is not scoped to any single tool. Today it covers the two data sources
+underneath every EVE Online industry/market tool — the **EVE ESI API** and the
+**EVE Online SDE** (Static Data Export) — the operator's own methodologies, and
+per-tool deep-dives under `tools/` (**[eveforge.org](https://eveforge.org)**
+/ EVEFORGE currently, more to follow as the operator adopts or documents them).
+Expect this repo's scope to keep growing: more tools, more methodologies, more
+general EVE knowledge, not just what's listed here today.
 
 The problem this solves: a tool's layout and terminology aren't always obvious,
-especially running a large multi-character operation. This repo documents what a
-given site actually contains (real navigation, real page purposes, real
-terminology — not guessed), what data ESI exposes, and what static game data the
-SDE contains, so any AI assistant can reason about your setup correctly instead of
-guessing.
+game mechanics have sharp edges that are easy to misremember, and knowledge that
+lives only in one operator's head is lost the moment they stop to explain it from
+scratch. This repo documents what a given site actually contains (real
+navigation, real page purposes, real terminology — not guessed), what data ESI
+exposes, what static game data the SDE contains, and how the operator actually
+runs their operation, so any AI assistant can reason about it correctly instead
+of guessing.
 
 ## The one rule
 
