@@ -20,9 +20,11 @@ cd eveforge-kb
 claude    # or: gemini
 ```
 
-It auto-reads `CLAUDE.md`/`GEMINI.md` → `AGENTS.md` → the knowledge files. Ask
-directly, e.g. "Where in EVEFORGE would I set up a stockpile target for a T2
-module?" or "What ESI scope do I need to read corp blueprints?"
+It auto-reads `CLAUDE.md`/`GEMINI.md` → `AGENTS.md` → the `knowledge/` and
+`tools/` files. Ask directly, e.g. "Where in EVEFORGE would I set up a stockpile
+target for a T2 module?" or "What ESI scope do I need to read corp blueprints?"
+Once other tools (Eve Guru, POD, ...) get their own `tools/<name>/site-map.md`,
+the same pattern of questions works for them too.
 
 ## Keeping it current
 

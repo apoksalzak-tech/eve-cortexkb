@@ -1,5 +1,6 @@
 ---
 title: EVEFORGE Site Map & Terminology
+status: fully documented — the tool currently in use by the operator (not treated as permanent/primary)
 source: https://eveforge.org
 observed: 2026-06-30
 ---
