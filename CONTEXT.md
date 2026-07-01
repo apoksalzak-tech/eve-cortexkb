@@ -639,6 +639,30 @@ budget for no new data, which matters most exactly in a 60-character loop.
 - Corp-level assets/jobs/wallet/blueprints require a **director** role token, not
   just any corp member — matches what EVEFORGE's Corporation Hub says.
 
+## Player-owned market hubs (structure IDs)
+
+Unlike the five NPC trade hubs (see the region-ID table in Part 3), which are
+public and keyed by region, player-owned Upwell structures (Keepstars,
+Fortizars, etc.) are **private by default** and keyed by an individual
+`structure_id`, not a region. Querying one requires an authenticated token from a
+character with docking/market access to that structure, carrying
+`esi-universe.read_structures.v1` (for `GET /universe/structures/{structure_id}/`)
+and `esi-markets.structure_markets.v1` (for
+`GET /markets/structures/{structure_id}/`). A bare unauthenticated call returns
+`401 Unauthorized` regardless of whether the ID is even valid — that response
+doesn't confirm or deny anything about the structure itself.
+
+**Operator's home market**: Goonswarm Federation's staging Keepstar, **"1st Taj
+Mahgoon"**, in system **C-J6MT** (Insmother region), structure_id
+**`1049588174021`**. Sourced from Goonswarm's own internal tool
+(goonmetrics.apps.goonswarm.org) via a market-import URL referencing that ID
+against C-J6MT — not independently verified via an authenticated ESI call (no
+token available at time of writing), so treat as high-confidence but unconfirmed
+until checked with a real token. **Access to this structure's live market/asset
+data is gated by whether the querying character has docking rights and the
+correct scopes — the operator has flagged private-structure access as an open
+problem to solve separately; it is not yet resolved in this repo.**
+
 ---
 
 # Part 3 — EVE Online SDE Reference (Fuzzwork export)
@@ -797,6 +821,11 @@ Region IDs are effectively permanent (CCP doesn't reassign them). "Check Jita
 prices" means "call `/markets/10000002/orders/` or `/history/`" — resolve the
 hub name to its region ID from this table before hitting any market endpoint;
 don't guess or re-derive it at query time.
+
+These five are all **NPC stations**, public and permanent. For a **player-owned
+null-sec market hub** (e.g. a home Keepstar), see "Player-owned market hubs
+(structure IDs)" in Part 2 — different lookup mechanism entirely (structure_id +
+authenticated token, not region_id + public call).
 
 ### Module/ship attributes (Dogma)
 | Table | Columns |

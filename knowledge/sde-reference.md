@@ -161,6 +161,11 @@ prices" means "call `/markets/10000002/orders/` or `/history/`" — resolve the
 hub name to its region ID from this table before hitting any market endpoint;
 don't guess or re-derive it at query time.
 
+These five are all **NPC stations**, public and permanent. For a **player-owned
+null-sec market hub** (e.g. a home Keepstar), see "Player-owned market hubs
+(structure IDs)" in `esi-api-index.md` — different lookup mechanism entirely
+(structure_id + authenticated token, not region_id + public call).
+
 ### Module/ship attributes (Dogma)
 | Table | Columns |
 |---|---|
