@@ -1,9 +1,9 @@
 ---
-title: eveforge-kb — Combined Context
+title: eve-cortexkb — Combined Context
 purpose: Single-file, self-contained AI context repo distilling the operator's EVE Online knowledge over time — the EVE ESI API, the EVE SDE, operator methodologies, and per-tool deep-dives (EVEFORGE currently, more planned) — not scoped to any one tool
 ---
 
-# eveforge-kb — Combined Context
+# eve-cortexkb — Combined Context
 
 Paste this whole file, or point a chatbot at its raw GitHub URL, and it has
 everything below in one shot. If you're an AI reading this: this is the full

@@ -1,4 +1,4 @@
-# eveforge-kb
+# eve-cortexkb
 
 An **AI context repo** for EVE Online — a durable, structured knowledge base meant
 to distill years of the operator's accumulated EVE knowledge into a form any AI

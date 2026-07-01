@@ -5,7 +5,7 @@
 Paste the raw URL of `CONTEXT.md` directly into the chat, e.g.:
 
 ```
-https://raw.githubusercontent.com/<your-username>/eveforge-kb/main/CONTEXT.md
+https://raw.githubusercontent.com/<your-username>/eve-cortexkb/main/CONTEXT.md
 ```
 
 Most chatbots with URL-fetch/browsing can pull it directly; otherwise open that URL
@@ -15,8 +15,8 @@ self-contained — site map, ESI index, SDE reference, and methodologies all in 
 ## Claude CLI / Gemini CLI
 
 ```
-git clone https://github.com/<your-username>/eveforge-kb
-cd eveforge-kb
+git clone https://github.com/<your-username>/eve-cortexkb
+cd eve-cortexkb
 claude    # or: gemini
 ```
 
