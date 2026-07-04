@@ -23,7 +23,7 @@ to get it** — not live data itself.
   token carrying the specific scope named below. Scopes look like
   `esi-assets.read_assets.v1` and are requested per-character at SSO login —
   EVEFORGE's own requested scope set is documented in
-  `tools/eveforge/site-map.md` under Characters.
+  `archive/eveforge/site-map.md` under Characters.
 - 180 endpoints total across 29 tags, as of spec 1.36.
 
 ## What this file does NOT define: how authentication actually happens

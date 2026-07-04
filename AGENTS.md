@@ -3,13 +3,15 @@
 You are operating inside an **AI context repo** for EVE Online — a durable
 knowledge base the operator (running an industrial operation across 60+
 characters) is building to distill years of accumulated EVE knowledge into a form
-any AI assistant can load and reason from correctly. It is not scoped to any one
-tool. Today it covers two foundational data sources — the **EVE ESI API** and the
-**EVE SDE** — plus whatever third-party tools the operator actually uses.
-**eveforge.org (EVEFORGE)** is the tool currently in use and fully documented here;
-it is not the repo's permanent or exclusive focus, and this repo's scope is
-expected to keep growing well beyond what's here today — other tools (Eve Guru, POD,
-...) will get guides of their own as the operator adopts them.
+any AI assistant can load and reason from correctly. The focus is **generic,
+tool-agnostic EVE knowledge first**: two foundational data sources — the
+**EVE ESI API** and the **EVE SDE** — plus whatever third-party tools the operator
+actually uses, documented under `tools/` as they're adopted. Fully documented
+tools that are no longer the active focus move to `archive/` rather than being
+deleted — **eveforge.org (EVEFORGE)** is currently there, fully documented but
+archived (see `archive/eveforge/site-map.md`). This repo's scope is expected to
+keep growing well beyond what's here today — other tools (Eve Guru, POD, ...)
+will get guides of their own as the operator adopts them.
 
 1. **Load the full knowledge base** from `CONTEXT.md` (single file, everything) or
    the individual files under `knowledge/` and `tools/` (same content, split by
@@ -27,15 +29,18 @@ expected to keep growing well beyond what's here today — other tools (Eve Guru
      — a growing scaffold, not yet mirrored into `CONTEXT.md`.
    - `knowledge/market-data-lookups.md` — verified, no-auth-required public APIs for
      a quick current price on one or a few specific items (see item 7 below).
-   - `tools/<tool-name>/` — one directory per tool the operator actually uses,
+   - `tools/<tool-name>/` — one directory per tool the operator actively uses,
      with a page-by-page map and terminology built from direct observation of the
      live site. Currently:
-     - `tools/eveforge/site-map.md` — EVEFORGE (industry & market ERP) — fully
-       documented, the tool in active use right now.
      - `tools/eve-guru/site-map.md` — placeholder, not yet documented.
      - `tools/pod/site-map.md` — placeholder, not yet documented.
      None of these is treated as "the" primary tool — check whichever directory
      matches the tool actually named in the question.
+   - `archive/<tool-name>/` — fully documented tool guides that are no longer the
+     active focus, kept rather than deleted:
+     - `archive/eveforge/site-map.md` — EVEFORGE (industry & market ERP) — fully
+       documented, archived. Still accurate as of its observed date; check it if
+       EVEFORGE is the tool actually named in the question.
 2. **The operator is an EVE expert.** Don't explain game fundamentals unless asked.
    The value here is tool fluency (starting with EVEFORGE) and knowing what data is
    actually available to answer a question precisely.
@@ -45,8 +50,10 @@ expected to keep growing well beyond what's here today — other tools (Eve Guru
    and must never be asserted from memory — point the operator to the relevant
    tool, ESI, or in-game to check.
 4. **When asked "where do I do X in EVEFORGE"** (or any other tool named in
-   `tools/`), check that tool's `tools/<tool-name>/site-map.md` first — it has the
-   real page-by-page map, not a guess from the site's marketing copy.
+   `tools/` or `archive/`), check that tool's `<dir>/<tool-name>/site-map.md`
+   first — it has the real page-by-page map, not a guess from the site's
+   marketing copy. Archived doesn't mean stale or off-limits, just not the
+   current active-development focus.
 5. **When asked what data is available** for a task, check
    `knowledge/esi-api-index.md` (live/player data) and `knowledge/sde-reference.md`
    (static game data) — between them they cover everything any ESI-synced tool

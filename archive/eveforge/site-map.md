@@ -1,6 +1,6 @@
 ---
 title: EVEFORGE Site Map & Terminology
-status: fully documented — the tool currently in use by the operator (not treated as permanent/primary)
+status: archived — moved out of the active tools/ tree so this repo can stay generic-knowledge-first; content below is unchanged and still fully documented, kept as a worked example of this repo's tool-mapping pattern
 source: https://eveforge.org
 observed: 2026-06-30
 ---

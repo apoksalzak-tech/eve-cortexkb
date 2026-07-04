@@ -31,7 +31,7 @@ triggered by *deficit against target*, not by a manually planned run list. Deman
 is met from standing stock; jobs are queued to refill whatever fell below target.
 
 This is not a hypothetical pattern for EVEFORGE users — it's a **built-in feature**:
-see `tools/eveforge/site-map.md` → Inventory → **Stockpiles** ("named inventory
+see `archive/eveforge/site-map.md` → Inventory → **Stockpiles** ("named inventory
 target containers for tracking stock health") and → Smart Queue ("optimal slot
 allocation by ISK/hr... runs based on stock deficit"). An operator running this
 methodology should be pointed straight at those two screens rather than a manual

@@ -3,11 +3,12 @@
 An **AI context repo** for EVE Online — a durable, structured knowledge base meant
 to distill years of the operator's accumulated EVE knowledge into a form any AI
 assistant can load and reason from correctly, instead of guessing or hallucinating.
-It is not scoped to any single tool. Today it covers the two data sources
+The focus is **generic, tool-agnostic EVE knowledge first**: the two data sources
 underneath every EVE Online industry/market tool — the **EVE ESI API** and the
-**EVE Online SDE** (Static Data Export) — the operator's own methodologies, and
-per-tool deep-dives under `tools/` (**[eveforge.org](https://eveforge.org)**
-/ EVEFORGE currently, more to follow as the operator adopts or documents them).
+**EVE Online SDE** (Static Data Export) — plus the operator's own methodologies.
+Per-tool deep-dives live under `tools/` as they're adopted and documented; fully
+documented tools that are no longer the active focus move to `archive/` rather
+than being deleted (see `archive/eveforge/site-map.md` for the current example).
 Expect this repo's scope to keep growing: more tools, more methodologies, more
 general EVE knowledge, not just what's listed here today.
 
@@ -53,9 +54,10 @@ knowledge/
   third-party-tools.md        EVE tools/websites not (yet) given their own tools/ guide (starter scaffold)
   market-data-lookups.md      public, no-auth current-price lookups (Fuzzwork/EVE Tycoon/Goonmetrics)
 tools/
-  eveforge/site-map.md        EVEFORGE site map & terminology — fully documented, tool in active use
   eve-guru/site-map.md        placeholder — not yet documented
   pod/site-map.md             placeholder — not yet documented
+archive/
+  eveforge/site-map.md        EVEFORGE site map & terminology — fully documented, archived (no longer the active focus)
 AGENTS.md                     universal agent primer (read first)
 CLAUDE.md / GEMINI.md         thin pointers so each CLI auto-loads context
 usage/how-to-query.md         exact steps for pointing each tool at this repo
@@ -79,10 +81,12 @@ See `usage/how-to-query.md` for exact steps per tool.
 
 ## Caveats
 
-- The EVEFORGE site map (`tools/eveforge/site-map.md`) was built by rendering the
+- The EVEFORGE site map (`archive/eveforge/site-map.md`) was built by rendering the
   live site with no character linked — every screen is documented in its empty/
   onboarding state. Table columns and navigation are accurate; populated-data
-  behavior (once you link characters) hasn't been verified yet.
+  behavior (once you link characters) hasn't been verified yet. It's archived
+  (moved out of `tools/`) so the repo's active tool coverage reflects only
+  what's currently being adopted/documented — the content itself is unchanged.
 - The ESI index and SDE reference are snapshots (spec v1.36 / SDE build 3409592,
   2026-06-30). Both are fairly stable but can drift after CCP patches — re-fetch
   from source if precision matters.
@@ -95,7 +99,7 @@ See `usage/how-to-query.md` for exact steps per tool.
   (evebook.com) is flagged unverified. See "Primary external reference" above.
 - `tools/eve-guru/` and `tools/pod/` are placeholders — no observation of those
   sites has been done yet. Fill them in following the pattern in
-  `tools/eveforge/site-map.md` once the operator starts using them.
+  `archive/eveforge/site-map.md` once the operator starts using them.
 - `market-data-lookups.md` (mirrored as Part 5 of `CONTEXT.md`) documents three
   public, no-auth APIs (Fuzzwork, EVE Tycoon, Goonmetrics) for quick current-price
   checks on a few items — every example call in it was actually run and verified

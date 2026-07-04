@@ -114,7 +114,7 @@ bonus → character time-reducing skills.
 **Job cost (ISK) is a separate calculation from material cost entirely** —
 roughly EIV (Estimated Item Value) × system cost index (ESI
 `GET /industry/systems/`, public) × structure/facility tax settings. See
-EVEFORGE's own Settings → Facilities screen (`tools/eveforge/site-map.md`) for the
+EVEFORGE's own Settings → Facilities screen (`archive/eveforge/site-map.md`) for the
 SCC Industry Tax / Facility Tax split it exposes there.
 
 **Bottom line for an agent**: never present a "build cost" derived only from
